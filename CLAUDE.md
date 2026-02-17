@@ -82,6 +82,16 @@ projects/
 - `NgFlowchartCanvasDirective` - Applied to a container element to create a flowchart canvas
 - `NgFlowchartStepDirective` - Applied to elements to make them draggable step sources
 
+### Major Features
+
+- **Horizontal & Vertical Orientation:** `orientation` option (`'VERTICAL'` | `'HORIZONTAL'`) with runtime switching via `setOrientation()`
+- **Drag-Scroll:** Canvas panning via configurable mouse buttons (`dragScroll` option)
+- **Manual Connectors:** Draw arrows between any two steps independent of the tree structure (`manualConnectors` option). Includes connector pads, selectable/deletable arrows, per-step validation overrides (`isConnectorPadEnabled()`, `isValidConnectorDropTarget()`), and callbacks (`onLinkConnector`, `afterDeleteConnector`)
+- **Zoom:** Mouse wheel or manual zoom with `skipRender` performance optimization for large workflows
+- **Nested Canvases:** Steps can contain their own flowchart canvases with scale synchronization (`setNestedScale()`)
+- **OnPush Change Detection:** Full support for `ChangeDetectionStrategy.OnPush`
+- **JSON with Connectors:** Export/import includes both `root` tree and `connectors` array
+
 ## Code Style & Conventions
 
 ### Formatting (Prettier)

@@ -22,13 +22,79 @@ Inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy)
 
 ## Change Log
 
+- 1.0.0-beta.31
+  - Scoped CSS styles more specifically to canvas elements
+  - Removed unnecessary keyframe animations
+
 - 1.0.0-beta.30
   - Angular 17 & 18 support
     - Requires use of ```{ provide: REMOVE_STYLES_ON_COMPONENT_DESTROY, useValue: false }```
       OR
       ```@import '@joelwenzel/ng-flowchart/assets/styles.scss';```
       to apply base step styles as Angular breaks base Component style inheritance with the new default ```REMOVE_STYLES_ON_COMPONENT_DESTROY: true```
-      
+  - Fixed closest canvas check to correctly identify the component's canvas element
+
+- 1.0.0-beta.29
+  - Angular 14-16 compatibility fix
+
+- 1.0.0-beta.28
+  - Angular 16 support
+  - New `skipRender` zoom option for efficient zooming on large workflows
+  - Firefox SVG rendering bug fixes for arrows and connectors
+  - Connector menu now renders next to the mouse cursor
+  - Fixed step reordering bug
+
+- 1.0.0-beta.27
+  - Nested `afterScale` event for synchronizing zoom across nested canvases
+  - `setNestedScale()` canvas method for setting scale on nested canvases
+
+- 1.0.0-beta.26
+  - Public `destroyConnectors()` method on step component
+  - Fixed "move step above" to allow movement of steps from any position even with children
+  - Enabled dragging steps within nested canvases
+  - Arrow drag and drag-scroll improvements
+  - Nested workflow scaling bug fixes
+
+- 1.0.0-beta.25
+  - `isConnectorPadEnabled()` and `isValidConnectorDropTarget()` overridable methods on step component
+
+- 1.0.0-beta.24
+  - `onLinkConnector` and `afterDeleteConnector` callbacks
+  - Per-step connector pad enable/disable
+  - Connector deletion now requires left-click
+  - Improved edge pan behavior when dragging arrows
+  - Renamed option to `manualConnectors`
+  - Prevented scroll propagation in nested canvas during drag-scroll
+
+- 1.0.0-beta.23
+  - [Manual connectors](#manual-connectors) feature for drawing arrows between any two steps
+  - Selectable arrows with delete action
+  - Configurable `dragScroll` mouse button options
+  - Edge panning while drawing connectors
+
+- 1.0.0-beta.22
+  - Fixed step drop bug when adding a parent to a child with siblings
+
+- 1.0.0-beta.21
+  - Minor bug fixes: OnPush render timing, palette drag target fix, drag-scroll with scrollbars, nested canvas rendering improvements
+
+- 1.0.0-beta.20
+  - [Horizontal orientation](#orientation) mode
+  - `setOrientation()` canvas method for runtime orientation switching
+
+- 1.0.0-beta.19
+  - Replaced tslint with eslint; added Prettier formatting
+  - [Drag-scroll](#dragscroll) feature for canvas panning
+  - OnPush change detection support
+  - Debounced window resize to limit render cycles
+  - Fixed zoom arrow drawing bugs and default zoom step value
+
+- 1.0.0-beta.18
+  - Angular 15 support
+
+- 1.0.0-beta.17
+  - Angular 14 upgrade and latest package updates
+
 - 1.0.2-beta
 
   - Support for canvas zoom/scale via mouse scroll or manual
@@ -40,12 +106,15 @@ Inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy)
     - Canvas Callback: beforeRender
     - Canvas Callback: afterRender
 
-## Current and Upcoming Feature List
+## Feature List
 
 - [Chart API](#chart-api)
 - [Getting Output JSON](#generating-output-json)
 - [Uploading from JSON](#uploading-json)
 - [Controlling Behavior](#controlling-behavior)
+- [Orientation](#orientation)
+- [Drag-Scroll](#dragscroll)
+- [Manual Connectors](#manual-connectors)
 - [Custom Steps](#custom-steps)
 - [Theming](#theming)
 - [Storing step data](#storing-step-data)
@@ -112,7 +181,25 @@ export class AppModule { }
 
    **For more complex steps** that may need to have specific rules or add their own children, you should create a [custom step component](#custom-steps).
 
-6. For more features and examples checkout the official documentation
+6. **Angular 17+ only:** Base step styles require one of the following due to Angular's `REMOVE_STYLES_ON_COMPONENT_DESTROY` defaulting to `true`:
+
+   **Option A** - Disable style removal in your app module providers:
+   ```
+   import { REMOVE_STYLES_ON_COMPONENT_DESTROY } from '@angular/platform-browser';
+
+   @NgModule({
+     providers: [
+       { provide: REMOVE_STYLES_ON_COMPONENT_DESTROY, useValue: false }
+     ]
+   })
+   ```
+
+   **Option B** - Import the library styles directly in your global `styles.scss`:
+   ```
+   @import '@joelwenzel/ng-flowchart/assets/styles.scss';
+   ```
+
+7. For more features and examples checkout the official documentation
 
 ## If you enjoy it give it a star
 
@@ -135,6 +222,12 @@ ngOnInit() {
     this.canvasElement.scaleDown()
     this.canvasElement.scaleUp()
     this.canvasElement.setScale(1) //resets back to default scale
+
+    // switch between vertical and horizontal orientation at runtime
+    this.canvasElement.setOrientation('HORIZONTAL')
+
+    // for nested canvases, sync the scale with the parent canvas
+    this.canvasElement.setNestedScale(0.8)
 }
 ```
 
@@ -157,9 +250,13 @@ flow.getRoot().children[0].parent
 
   Returns the root node/step of this flowchart.
 
-- #### **toJSON(indent?: number): void**
+- #### **toJSON(indent?: number): string**
 
-  Returns the JSON representation of this flowchart. Optionally specify an indent factor
+  Returns the JSON string representation of this flowchart. Optionally specify an indent factor
+
+- #### **toObject(): object**
+
+  Returns the plain object representation of this flowchart, including the `root` tree and `connectors` array
 
 - #### **render(pretty?: boolean): void**
 
@@ -174,8 +271,8 @@ flow.getRoot().children[0].parent
 
   Clears the current flow, reseting the canvas. canDeleteStep callbacks will not be called from this method.
 
-- #### **upload(json: string): Promise<void>**
-  Clears the existing flow and uploads a new flow from the json string representation.
+- #### **upload(json: string | object): Promise<void>**
+  Clears the existing flow and uploads a new flow from a json string or object representation. The object should contain a `root` property and an optional `connectors` array.
 
 ## Step Object Methods and Properties
 
@@ -202,6 +299,15 @@ See the [wiki](https://github.com/joel-wenzel/ng-flowchart/wiki/Creating-Steps) 
 - #### **removeChild(child: NgFlowchartStepComponent)**
   Remove a child from this step. Returns the index at which the child was found or -1 if not found.
 
+- #### **destroyConnectors(endStepId?: string)**
+  Destroys manual connector(s) originating from this step. Optionally specify an `endStepId` to only destroy the connector to that specific step. If omitted, all connectors from this step are destroyed.
+
+- #### **isConnectorPadEnabled(): boolean**
+  Override this method in custom step components to control whether the connector pad is shown on this step. By default, it is disabled when `isSequential` is true and the step already has a child or outgoing connector.
+
+- #### **isValidConnectorDropTarget(): boolean**
+  Override this method in custom step components to control whether this step accepts incoming manual connectors. By default, returns true if the step's drop positions include `ABOVE`.
+
 # Generating Output JSON
 
 The flowchart can be exported in json format via the Flow object or Step object.
@@ -219,7 +325,7 @@ onButtonClicked() {
 
 ```
 
-Here is sample json output for a very basic 3 node chart
+Here is sample json output for a 3 node chart with a manual connector
 
 ```
 {
@@ -252,9 +358,9 @@ Here is sample json output for a very basic 3 node chart
       },
       {
         "id": "s1608918285174",
+        "type": "notification",
         "data": {
           "name": "Notification",
-          "type": "notification",
           "inputs": [
             {
               "name": "Address",
@@ -265,10 +371,18 @@ Here is sample json output for a very basic 3 node chart
         "children": []
       }
     ]
-  }
+  },
+  "connectors": [
+    {
+      "startStepId": "s1608918283650",
+      "endStepId": "s1608918285174"
+    }
+  ]
 }
 
 ```
+
+The `connectors` array is included when [manual connectors](#manual-connectors) are used. Each connector records the `startStepId` and `endStepId` of the linked steps. Connectors are separate from the parent-child tree structure.
 
 # Uploading JSON
 
@@ -341,6 +455,25 @@ Options are passed via the **ngFlowchartOptions** input on the **ngFlowchartCanv
 
 - #### **zoom**
   Canvas zoom options. Defaults to mouse WHEEL zoom with a step of .1 (10%)
+
+  - `mode` - `'WHEEL'` | `'MANUAL'` | `'DISABLED'`. Default is `'WHEEL'`
+  - `defaultStep` - The zoom increment per step. Default is `0.1` (10%)
+  - `skipRender` - When `true`, zooming applies a CSS transform without re-rendering the entire flow. This is a performance optimization for large workflows with many steps. Default is `false`
+
+- #### **dragScroll**
+  Enable canvas panning by clicking and dragging. Accepts an array of mouse buttons: `('LEFT' | 'MIDDLE' | 'RIGHT')[]`. Default is `['RIGHT']`. When `'RIGHT'` is included, the context menu is automatically suppressed on the canvas.
+
+  ```
+  options: NgFlowchart.Options = {
+    dragScroll: ['RIGHT', 'MIDDLE'],
+  };
+  ```
+
+- #### **orientation**
+  The layout direction of the flowchart. `'VERTICAL'` renders the tree top-to-bottom, `'HORIZONTAL'` renders it left-to-right. Default is `'VERTICAL'`. The drop positions (`ABOVE`, `BELOW`, `LEFT`, `RIGHT`) are rotated accordingly in horizontal mode. See [Orientation](#orientation) for more details.
+
+- #### **manualConnectors**
+  Enables the manual connector feature, which allows users to draw arrows between any two steps. When enabled, a connector pad appears on each step. Default is `false`. See [Manual Connectors](#manual-connectors) for more details.
 
 ## Callbacks
 
@@ -416,6 +549,155 @@ onDropStep(dropEvent: NgFlowchart.DropEvent) {
 
 - #### **afterScale?**: (newScale: number) => void
   Called after the canvas has been scaled
+
+- #### **onLinkConnector?**: (connector: NgFlowchart.Connector) => void
+  Called after a manual connector has been linked from one step to another. The connector object contains `startStepId` and `endStepId`.
+
+- #### **afterDeleteConnector?**: (connector: NgFlowchartConnectorComponent) => void
+  Called after a manual connector has been deleted.
+
+# Orientation
+
+The flowchart supports both vertical (top-to-bottom) and horizontal (left-to-right) layouts. Set the `orientation` option to control the initial layout direction.
+
+```
+options: NgFlowchart.Options = {
+  orientation: 'HORIZONTAL',
+};
+```
+
+You can also switch orientation at runtime using the `setOrientation()` method on the canvas directive:
+
+```
+@ViewChild(NgFlowchartCanvasDirective)
+canvas: NgFlowchartCanvasDirective;
+
+toggleOrientation() {
+  this.canvas.setOrientation('HORIZONTAL'); // or 'VERTICAL'
+}
+```
+
+In horizontal mode, the tree flows left-to-right. The drop position names (`ABOVE`, `BELOW`, `LEFT`, `RIGHT`) are visually rotated -90 degrees but maintain their semantic meaning for the tree structure.
+
+# DragScroll
+
+The drag-scroll feature allows users to pan the canvas by clicking and dragging with a configurable mouse button. This is useful when the flowchart is larger than the visible canvas area.
+
+```
+options: NgFlowchart.Options = {
+  dragScroll: ['RIGHT', 'MIDDLE'],
+};
+```
+
+Accepted values are `'LEFT'`, `'MIDDLE'`, and `'RIGHT'`. When `'LEFT'` is used, drag-scroll only activates when clicking directly on the canvas background (not on steps). When `'RIGHT'` is included, the browser context menu is automatically suppressed on the canvas.
+
+# Manual Connectors
+
+Manual connectors allow users to draw arrows between any two steps, independent of the parent-child tree structure. This enables creating loops, joining branches, or linking to steps in different parts of the workflow.
+
+## Enabling Manual Connectors
+
+Set `manualConnectors: true` in your options:
+
+```
+options: NgFlowchart.Options = {
+  manualConnectors: true,
+};
+```
+
+## How It Works
+
+When enabled, a connector pad appears on each step. Users can click and drag from the pad to draw an arrow to any valid target step.
+
+- **Drawing**: Click and drag from the connector pad on a step to draw a line to another step
+- **Selecting**: Left-click on a connector arrow to select it. A delete button appears near the cursor
+- **Deleting**: Click the delete button on a selected connector to remove it
+- **Hover states**: Connector arrows highlight on hover and show a distinct style when selected
+
+## Connector Validation
+
+By default, connectors cannot link to the same step, to a step that already has an identical connector, to direct children of the source step, or across different canvases.
+
+You can customize connector behavior per step by overriding these methods in your custom step component:
+
+```
+export class MyCustomStep extends NgFlowchartStepComponent {
+
+  // Control whether the connector pad is visible on this step
+  isConnectorPadEnabled(): boolean {
+    // Example: only show pad if this step has no children
+    return !this.hasChildren();
+  }
+
+  // Control whether this step can receive incoming connectors
+  isValidConnectorDropTarget(): boolean {
+    // Example: only accept connectors if drop positions include ABOVE
+    return this.getDropPositionsForStep(this.drop.dragConnector).includes('ABOVE');
+  }
+}
+```
+
+## Connector Callbacks
+
+Two callbacks are available for connector events:
+
+```
+callbacks: NgFlowchart.Callbacks = {};
+
+constructor() {
+  this.callbacks.onLinkConnector = this.onLink;
+  this.callbacks.afterDeleteConnector = this.onDelete;
+}
+
+onLink(connector: NgFlowchart.Connector) {
+  console.log(`Connected ${connector.startStepId} -> ${connector.endStepId}`);
+}
+
+onDelete(connector: NgFlowchartConnectorComponent) {
+  console.log('Connector deleted');
+}
+```
+
+## Programmatic Connector Deletion
+
+You can destroy connectors programmatically from a step instance:
+
+```
+// Destroy all connectors originating from this step
+step.destroyConnectors();
+
+// Destroy only the connector to a specific step
+step.destroyConnectors('targetStepId');
+```
+
+## JSON Format with Connectors
+
+When manual connectors are used, the JSON output includes a `connectors` array alongside the `root` tree:
+
+```
+{
+  "root": { ... },
+  "connectors": [
+    { "startStepId": "s123", "endStepId": "s456" },
+    { "startStepId": "s789", "endStepId": "s123" }
+  ]
+}
+```
+
+Connectors are automatically serialized and restored during JSON export/upload.
+
+## Theming Connectors
+
+Connector arrow styles can be overridden in your global stylesheet:
+
+```
+/** Connector arrow path */
+.ngflowchart-connector svg path {
+  stroke: #6c757d;
+}
+
+/** Selected connector style is controlled via marker-end URL references */
+```
 
 # Custom Steps
 
@@ -494,6 +776,12 @@ For the most part, the theme is left to the user given they have complete contro
   & #arrowpath {
     stroke: darkgrey;
   }
+}
+
+/** Manual connector arrow styling (when manualConnectors is enabled) */
+.ngflowchart-connector svg path {
+  stroke: #6c757d;
+  stroke-width: 2;
 }
 
 ```
@@ -584,6 +872,38 @@ div#canvas[disabled="true"] ::ng-deep.ngflowchart-step-wrapper {
 - [michaelmarcuccio](https://github.com/michaelmarcuccio)
 
 # FAQ
+
+### OnPush Change Detection
+
+The library supports `ChangeDetectionStrategy.OnPush`. You can safely use OnPush in the component hosting your canvas:
+
+```
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AppComponent { }
+```
+
+### Nested Canvas Zoom Synchronization
+
+When using nested flowcharts inside steps, parent canvas zoom changes are not automatically propagated to nested canvases. Use the `afterScale` callback to synchronize:
+
+```
+callbacks: NgFlowchart.Callbacks = {};
+
+constructor() {
+  this.callbacks.afterScale = this.afterScale.bind(this);
+}
+
+afterScale(scale: number): void {
+  const children = this.canvas.getFlow().getRoot().children;
+  children.forEach(step => {
+    if (step instanceof NestedFlowComponent) {
+      step.nestedCanvas.setNestedScale(scale);
+    }
+  });
+}
+```
 
 ### Undefined variables in a callback
 
