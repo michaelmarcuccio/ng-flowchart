@@ -54,7 +54,7 @@ Inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy)
     - Canvas Callback: beforeRender
     - Canvas Callback: afterRender
 
-## Feature List
+## Current and Upcoming Feature List
 
 - [Chart API](#chart-api)
 - [Getting Output JSON](#generating-output-json)
