@@ -150,6 +150,6 @@ GitHub Actions workflow (`.github/workflows/main.yml`):
 2. **Public API:** Only items exported through `projects/ng-flowchart/src/index.ts` are part of the public API. Internal services should not be exported.
 3. **Build before test with demo:** The demo app (`workspace`) imports the library from `dist/ng-flowchart` via the tsconfig path alias. Build the library first (`npm run build`) before serving the demo.
 4. **ng-packagr:** The library is packaged with ng-packagr. The `ng-package.json` file controls entry points and assets. SCSS assets are bundled from the `assets/` directory.
-5. **Angular version support:** The library supports Angular 14-18 via peer dependencies. Avoid using APIs exclusive to Angular 18+ to maintain backward compatibility.
+5. **Angular version support:** The library supports Angular 16-21 via peer dependencies. Avoid using APIs exclusive to Angular 19+ to maintain backward compatibility.
 6. **No standalone components:** The library uses `NgModule` declarations, not standalone components. Follow this pattern for new components.
 7. **Custom steps pattern:** Users extend `NgFlowchartStepComponent` and register types via `NgFlowchartStepRegistryService` for JSON serialization/deserialization. Refer to the demo app's `custom-step/`, `form-step/`, and `nested-flow/` for examples.
