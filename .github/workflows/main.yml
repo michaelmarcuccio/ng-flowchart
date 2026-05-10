@@ -94,6 +94,7 @@ jobs:
   publish:
     needs: [build, compat-test]
     runs-on: ubuntu-latest
+    if: github.repository == 'joel-wenzel/ng-flowchart'
     steps:
       - uses: actions/setup-node@v4
         with:
