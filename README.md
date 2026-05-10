@@ -1,20 +1,19 @@
 # NgFlowchart
 
-[Demo](https://joelwenzel.com/projects/flowchart?palette=standard) | [Npm](https://www.npmjs.com/package/@joelwenzel/ng-flowchart) | [Getting started](#getting-started) | [Wiki](https://github.com/joel-wenzel/ng-flowchart/wiki/NgFlowchart)
+[Npm](https://www.npmjs.com/package/@michaelmarcuccio/ng-flowchart) | [Getting started](#getting-started) | [Demo (upstream)](https://joelwenzel.com/projects/flowchart?palette=standard) | [Wiki (upstream)](https://github.com/joel-wenzel/ng-flowchart/wiki/NgFlowchart)
 
 A lightweight Angular Library for building drag and drop flow charts. Chart behavior and steps are customizable. Data can be exported or uploaded in json format.
 
-Inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy)
+This package is a maintained fork of [`@joelwenzel/ng-flowchart`](https://github.com/joel-wenzel/ng-flowchart) by [@joelwenzel](https://github.com/joel-wenzel), inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy). The original demo and wiki linked above remain accurate references for most of the API.
 
 # Contents
 
-- [Demo](https://joelwenzel.com/projects/flowchart?palette=standard)
 - [Supported Angular versions](#supported-angular-versions)
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Contributers](#contributers)
 - [FAQ](#faq)
-- [Docs](https://github.com/joel-wenzel/ng-flowchart/wiki/NgFlowchart)
+- [Docs (upstream wiki)](https://github.com/joel-wenzel/ng-flowchart/wiki/NgFlowchart)
 
 ## Supported Angular versions
 
@@ -22,10 +21,11 @@ Inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy)
 
 ## Change Log
 
-- 1.0.0-beta.32
-  - Angular 19, 20, & 21 support; supported range is now Angular 16 - 21
+- 1.0.0
+  - Initial release of `@michaelmarcuccio/ng-flowchart`, a maintained fork of `@joelwenzel/ng-flowchart@1.0.0-beta.32`
+  - Angular 19, 20, & 21 support; supported range is Angular 16 - 21
 
-- 1.0.0-beta.31
+- 1.0.0-beta.31 _(upstream)_
   - Scoped CSS styles more specifically to canvas elements
 
 - 1.0.0-beta.30
@@ -76,14 +76,14 @@ Inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy)
 1. Install it.
 
 ```
-npm i --save @joelwenzel/ng-flowchart
+npm i --save @michaelmarcuccio/ng-flowchart
 ```
 
 2. Import it.  
    In your app module or module that contains your editor, import `NgFlowchartModule`.
 
 ```
-import { NgFlowchartModule } from '@joelwenzel/ng-flowchart';
+import { NgFlowchartModule } from '@michaelmarcuccio/ng-flowchart';
 
 @NgModule({
   imports: [
@@ -147,14 +147,14 @@ export class AppModule { }
 
    **Option B** - Import the library styles directly in your global `styles.scss`:
    ```
-   @import '@joelwenzel/ng-flowchart/assets/styles.scss';
+   @import '@michaelmarcuccio/ng-flowchart/assets/styles.scss';
    ```
 
 7. For more features and examples checkout the official documentation
 
 ## If you enjoy it give it a star
 
-Please star the [repo](https://github.com/joel-wenzel/ng-flowchart) if you liked the library. Your support means everything to me and helps me focus on delivering new features
+Please star the [repo](https://github.com/michaelmarcuccio/ng-flowchart) if you find this fork useful. If you also enjoy the underlying library, consider starring [the original repo](https://github.com/joel-wenzel/ng-flowchart) as well.
 
 # Chart API
 

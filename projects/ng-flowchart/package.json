@@ -1,6 +1,6 @@
 {
-  "name": "@joelwenzel/ng-flowchart",
-  "version": "1.0.0-beta.32",
+  "name": "@michaelmarcuccio/ng-flowchart",
+  "version": "1.0.0",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@angular/common": "16 - 21",
@@ -10,7 +10,7 @@
     "tslib": "^2.3.0"
   },
   "repository": {
-    "url": "https://github.com/joel-wenzel/ng-flowchart/tree/master/projects/ng-flowchart"
+    "url": "https://github.com/michaelmarcuccio/ng-flowchart/tree/1.0.0-beta/projects/ng-flowchart"
   },
   "ngPackage": {
     "lib": {

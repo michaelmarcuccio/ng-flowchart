@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
     FormStepComponent,
   ],
   imports: [BrowserModule, NgFlowchartModule, FormsModule],
-  // ANGULAR 17+ NECESSARY IF NOT USING @import '@joelwenzel/ng-flowchart/assets/styles.scss';
+  // ANGULAR 17+ NECESSARY IF NOT USING @import '@michaelmarcuccio/ng-flowchart/assets/styles.scss';
   providers: [{ provide: REMOVE_STYLES_ON_COMPONENT_DESTROY, useValue: false }],
   bootstrap: [AppComponent],
 })

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**ng-flowchart** is a lightweight Angular library for building drag-and-drop flowcharts. It provides customizable chart behavior, step components, and JSON import/export capabilities. Published as `@joelwenzel/ng-flowchart` on NPM.
+**ng-flowchart** is a lightweight Angular library for building drag-and-drop flowcharts. It provides customizable chart behavior, step components, and JSON import/export capabilities. Published as `@michaelmarcuccio/ng-flowchart` on NPM (a maintained fork of the upstream `@joelwenzel/ng-flowchart`).
 
 - **Angular version:** 18.0.3
 - **TypeScript version:** 5.4.5
