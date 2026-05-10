@@ -18,9 +18,12 @@ Inspired by [Alyssa X Flowy](https://github.com/alyssaxuu/flowy)
 
 ## Supported Angular versions
 
-- Angular 16+
+- Angular 16 - 21
 
 ## Change Log
+
+- 1.0.0-beta.32
+  - Angular 19, 20, & 21 support; supported range is now Angular 16 - 21
 
 - 1.0.0-beta.31
   - Scoped CSS styles more specifically to canvas elements
