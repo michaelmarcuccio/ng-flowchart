@@ -139,10 +139,11 @@ projects/
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/main.yml`):
-- Triggers on push to `1.0.0-beta` branch or manual dispatch
-- Runs on `ubuntu-latest` with Node 18
-- Steps: `npm install` -> `npm run build` -> `npm publish --access public`
-- Publishes from `dist/ng-flowchart` to NPM using `NPM_AUTH_TOKEN` secret
+- Triggers on push to `main` branch or manual dispatch
+- Three jobs run on `ubuntu-latest`:
+  - `build`: installs deps, builds the library, packs the tarball, uploads as artifact
+  - `compat-test`: matrix over Angular 16/18/21, generates a fresh `ng new` project, installs the packed tarball, imports `NgFlowchartModule`, builds
+  - `publish`: gated to this fork (`if: github.repository == 'michaelmarcuccio/ng-flowchart'`); publishes via npm Trusted Publishing (OIDC), no long-lived token. Uses `npm publish --provenance --access public`.
 
 ## Important Notes for AI Assistants
 

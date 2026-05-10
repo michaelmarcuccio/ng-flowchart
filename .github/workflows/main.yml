@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [1.0.0-beta]
+    branches: [main]
 
   workflow_dispatch:
 
