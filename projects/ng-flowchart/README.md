@@ -21,6 +21,9 @@ This package is a maintained fork of [`@joelwenzel/ng-flowchart`](https://github
 
 ## Change Log
 
+- 1.0.1
+  - Export `NgFlowchartConnectorComponent` from the public API so it's importable as the type referenced by `NgFlowchart.Callbacks.afterDeleteConnector`
+
 - 1.0.0
   - Initial release of `@michaelmarcuccio/ng-flowchart`, a maintained fork of `@joelwenzel/ng-flowchart@1.0.0-beta.32`
   - Angular 19, 20, & 21 support; supported range is Angular 16 - 21
